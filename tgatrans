@@ -1,0 +1,7 @@
+for i in $(find . -name *.dds)
+do
+	echo $i
+	convert $i ${i%.dds}.tga
+	rm $i
+done
+

@@ -1,0 +1,28 @@
+#package解包
+#debug
+
+get MYFOLDER filename
+string MYFOLDER -= .package
+string MYFOLDER += \
+
+getdstring HEADER 10                # 文件头标志
+get FILES long                        # 文件数量
+get ZIPOffset        long                # 压缩数据开始地址
+get END        byte                        # 结束符00
+
+for i = 0 < FILES
+
+get FLSIZE short                # 文件列表信息长度
+set NAMESIZE long FLSIZE
+math NAMESIZE -= 27                # 文件名长度
+
+get OFFSET long                        # 文件数据偏移地址
+get UKN1 long                        # 未知数据1 00 00 00 00
+get SIZE long                        # 文件大小
+get ZSIZE long                        # 压缩大小
+getdstring CRC 9                # CRC?
+getdstring NAME NAMESIZE        # 取文件名
+
+Clog NAME OFFSET ZSIZE SIZE        # 解压文件
+
+next i
