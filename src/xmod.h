@@ -1,11 +1,11 @@
-#ifndef __PKG_H__
-#define __PKG_H__
+#ifndef __XMOD_H__
+#define __XMOD_H__
 
 #include "define.h"
 
 
 #pragma pack(4)
-typedef struct _PkgHead
+typedef struct _XmodHead
 {
     char   filetag[10]; 
     char   version[20];
@@ -16,28 +16,16 @@ typedef struct _PkgHead
     uint8  encrypt;  
     uint8  reserve[32];  
 
-} PkgHead;
-
-typedef struct _PkgFile
-{
-    char   path[260];
-    char   md5[33];
-    uint32 offset;
-    uint32 rawsize;
-    uint32 zipsize;
-    uint8  ziptype;
-    uint8  weakuse;
-
-} PkgFile;
+} XmodHead;
 
 #pragma pack()
 
 
-class Pkg
+class Xmod
 {
 public:
-	Pkg(const char* filename);
-	~Pkg();
+	Xmod(const char* path);
+	~Xmod();
 
 	void info();
 	void save();
@@ -45,8 +33,7 @@ public:
 	char 	 _path[255];
 	ifstream _file;
 
-	PkgHead         _head;
-	vector<PkgFile> _list;
+	XmodHead _head;
 };
 
 

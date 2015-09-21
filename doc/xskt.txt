@@ -1,24 +1,33 @@
-char[4]        Header                        // 文件头 XSAM
-dword        Version                        // 版本 05 10
-dword        ukn1                        // 06 00 00 00
-dword        fname_size                // 文件名长度
-char[fname_size] fname                // 文件名
-dword        ukn2                        // 00 00 00 00
-dword        numKeys                        // Animate Frame count
-float   Frame_Rate                // FPS??
-float[6] BoundingBox                // Not sure??
+Struct Header {
+  char[4]       HeaderID                //"XSAM"
+  dword         Version
+  dword         len
+  char[len]     XSKT_name
+  dword         ??
+  dword         Anim_Keys
+  float         Frame_Rate
+  float[6]      BoundingBox_XYZ
+  dword         ??                      //Amination Flag??
+}
 
+struct Bone {
+  dword         len
+  char[len]     Bone_name
+  dword         Bone_Type               //3=NubBone
+  *dword        Key_Type                //only on Bone_Type == 4
+  dword         Anim_Key_Flag           //?? 0 = no animation, 1 = animation present
+  float[3]      Trans_XYZ
+  float[4]      Rotate_QuatXYZW
+  float[3]      Scale_XYZ
 
-struct ANM_BONE {
-  dword PID                        // 父骨骼编号?
-  dword        bname_size                // 骨骼名长度
-  char[bname_size] bname        // 骨骼名
-  dword        bnum1                        // 4        
-  dword        bnum2                        // 0,2
-  if bnum1== 4 then (dword        bnum3)                        // 1
-  float[3] Init_Position
-  float[4] Init_Rotation
-  float[3] Init_Scale
-  Ani_data[bnum2][numKeys]         // Ani_data 6bytes ?
-  Ani_data[bnum3][numKeys]        // Ani_data 6bytes ?
+  struct Anim_Type0 {
+    short[3]    Rotate_XYZ
+  }
+
+  struct Anim_Type2 {
+    short[3]    Rotate_XYZ
+    float[4]    Trans_XYZ
+  }
+
+  dword         Num_Child
 }
