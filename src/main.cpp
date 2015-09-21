@@ -1,43 +1,30 @@
 #include <iostream>
 #include <cmath>
 #include "util.h"
-#include "pkg.h"
-#include "ani.h"
-#include "mex.h"
+#include "xmod.h"
 
 using namespace std;
 
+#define TestClass Xmod
+#define TestFiles "res/npc/worldnpc029.xmod"
 
-void read_pkg(const char *filename)
+void work(const char *path)
 {
-	Pkg pkg(filename);
-	pkg.info();
-	pkg.save();
-}
-
-void read_ani(const char *filename)
-{
-    Ani ani(filename);
-    ani.info();
-}
-
-void read_mex(const char *filename)
-{
-    Mex mex(filename);
-    mex.info();
+	TestClass tt(path);
+	tt.info();
 }
 
 int main(int argc, char* argv[])
 {
-	for(int i = 1; i < argc; i ++)
-		read_mex(argv[i]);
-	//read_pkg("../raw/Avatar.package");
-	//read_pkg("../raw/Character.package");
-	//read_ani("res/mwandou05.ani");
-	//read_mex("res/female.mex");
-    //read_mex("out/data/avatar/aecorativeclothing/femaleaecorativeclothing30522/femaleaecorativeclothing30522.mex");
-
-
+    if(argc > 1)
+    {
+	    for(int i = 1; i < argc; i ++)
+	    	work(argv[i]);
+    }
+    else
+    {
+	    work(TestFiles);
+    }
 
     return 0;
 }
