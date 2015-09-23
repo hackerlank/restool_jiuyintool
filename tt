@@ -1,0 +1,6 @@
+make
+
+#./bin/test ../res.package.files/res/obj/player/g_char/g_festival_1_7/g_festival_1_7q.xmod ../res.package.files/res/obj/player/g_char/g_festival_1_7/g_festival_1_7.xmod ../res.package.files/res/obj/itemnpc/booknpcds002/booknpcds002.xmod ../res.package.files/res/obj/itemnpc/itemnpc004/itemnpc004.xmod
+
+#./bin/test ../res.package.files/res/obj/player/g_char/g_cloth004/g_cloth004.xmod
+./bin/test ../res.package.files/res/obj/player/b_char/b_cloak_1_2/b_cloak_1_2.xmod

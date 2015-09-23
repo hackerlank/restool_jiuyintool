@@ -5,20 +5,33 @@
 
 
 #pragma pack(4)
-typedef struct _XmodHead
+typedef struct _Bind
 {
-    char   filetag[10]; 
-    char   version[20];
+    int     b1;
+    float   w1;
+    int     b2;
+    float   w2;
+    int     b3;
+    float   w3;
+    int     b4;
+    float   w4;
+} Bind;
 
-	uint32 filecount;
-	uint32 tbloffset;
+typedef struct _Obj
+{
+    char name[255];
 
-    uint8  encrypt;  
-    uint8  reserve[32];  
+    char mtlName[255];
+    char texName[255];
+    char texFile[255];
 
-} XmodHead;
+    vector<float>   vert;
+    vector<short>   face;
+    vector<Bind>    bind;
+} Obj;
 
 #pragma pack()
+
 
 
 class Xmod
@@ -33,7 +46,10 @@ public:
 	char 	 _path[255];
 	ifstream _file;
 
-	XmodHead _head;
+    uint32 _tag;
+    uint32 _ver;
+    char   _name[255];
+    vector<Obj> _objs;
 };
 
 
