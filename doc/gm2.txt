@@ -1,0 +1,93 @@
+#Age of Wulin GM2 model outline
+
+#A single model may contain multiple meshes.
+
+#Each mesh defines the number of vertices and faces that make up the mesh.
+
+#The index and vertex buffers follow afterwards, for all of the meshes
+#(so you need to store the individual numbers somewhere when you parse it)
+
+#You need to know the total number of faces and vertices.
+
+#The size of the vertex is determined by vertSectionSize / totalVertex, where the section size is given to you
+#before you start parsing the vertices
+
+Basic idea of the format
+
+Header
+Material/Mesh names
+
+Material 1
+Material 2
+...
+
+Mesh 1
+Mesh 2
+...
+
+All indices
+All vertices
+
+==========================================================
+
+struct Header {
+   char[4] idstring "60.1"
+   dword
+   dword matSectionSize
+   dword numNames
+   dword numMat
+   dword numMesh
+   dword
+   dword
+   dword
+   dword total Faces
+   dword
+}
+
+struct unkStruct {
+   dword[2]
+   float[3]
+   dword[6]
+   dword[3]
+}
+
+struct Vertex {
+   // standard vertex info.
+   // Varies depending on the size of the vertex
+}
+
+struct Mesh {
+   
+   dword[3]
+   float[4]
+   dword
+   dword numFaces
+   dword
+   dword numVerts
+   byte[64] just_skip_it
+}
+
+struct File {
+   Header
+   float_3 bboxMin
+   float_3 bboxMax // or maybe the other way around
+   float radius
+   
+   numName {
+      string_0 name // null-terminated strings
+      // usually matName, texName, ?, meshName but sometimes different...
+   }
+   
+        dword 
+   ############
+   dword[??] integers // see below
+   ############
+   
+   numMesh unkStruct // I don't know
+   numMesh Mesh 
+   
+   word[TotalFaces * 3] indices
+   dword ???
+   dword vertSectionSize
+   totalVerts Vertex
+}
