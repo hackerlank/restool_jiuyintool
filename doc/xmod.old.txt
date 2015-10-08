@@ -1,0 +1,68 @@
+char[4]        Header                        // 文件头 XVAM
+dword        Version                        // 版本 02 10
+dword        ukn1                        // 02 00 00 00
+dword        ukn2                        // 01 00 00 00
+dword        fname_size                // 文件名长度
+char[fname_size] fname                // 文件名
+dword        ukn3                        // 00 00 00 00
+dword        num1                        // 10,100,200
+float[7] f_unk1                        // 28 byte
+
+dword        numObj                        // 对象数量
+
+ObjData[numObj]
+{
+        dword        ObjName_size                // 对象名称长度
+        char[ObjName_size] ObjName        // 对象名称
+        dword        num2                        // 01 00 00 00
+        short        type1                        // 00 00, 05 10, 05 20
+        short   type2                        // 00 00, 02 01, 02 10
+        if type1 == 05 20
+        {
+           f_unk2[num1];
+        }
+        char[68] ukn5                        // 未知68个字节
+
+        dword        numMtl                        // 材质数量
+        dword        MtlName_size                // 材质名长度
+        char[MtlName_size] MtlName        // 材质名
+
+        dword        ukn6                        // 00 00 00 00
+        dword        ukn7                        // 05 94 20 08
+
+        dword        numVert;                // 顶点数量
+        struct        MeshData[numVert]        // 顶点数据
+        {
+                Vert[numVert];
+                Normal[numVert];
+                UV[numVert];
+        }
+                
+
+        dword numFace;                        // 面数
+        struct        Face[numFace];                // 面数据
+        {
+                short f1;
+                short f2;
+                short f3;
+        }
+
+        struct Weight[numVert];                //蒙皮
+        {
+                dword b01;
+                float w01;
+                dword b02;
+                float w02;
+                dword b03;
+                float w03;
+        }
+
+        char[28] unk8
+
+        dword        TexName_size                // 贴图名长度
+        char[TexName_size]                 // 贴图名
+        dword        TexFile_size                // 贴图文件名长度
+        char[TexFile_size]                 // 贴图文件名
+
+        char[8] unk9                        // 00 00 00 00 00 00 00 00 结束
+}
