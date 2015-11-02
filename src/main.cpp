@@ -11,7 +11,9 @@ using namespace std;
 //#define TestFiles "res/girl/TposeTmp.xmod"
 //#define TestFiles "../res.package.files/res/obj/player/g_char/g_festival_1_7/g_festival_1_7.xmod"
 //#define TestFiles "../res.package.files/res/obj/weapon/weapon_boss_003_exp/weapon_boss_003.xmod"
-#define TestFiles "../res.package.files/res/obj/weapon/sthorn/sthorn_006/sthorn_006.xmod"
+//#define TestFiles "../res.package.files/res/obj/weapon/sthorn/sthorn_006/sthorn_006.xmod"
+#define TestFiles "../char/g_fashion001/g_foots001.xmod"
+
 
 
 

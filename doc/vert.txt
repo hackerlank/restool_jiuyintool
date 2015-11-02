@@ -140,3 +140,9 @@ num2    type1   type2   ukn7        vert
 
 
 
+
+
+
+4101 32  vx vy vz nx ny nx tu tv
+5381 56  vx vy vz nx ny nz bix biy biz tx ty tz tu tv
+5397 60  vx vy vz nx ny nz bix biy biz tx ty tz tu tv
