@@ -29,6 +29,18 @@ Xmod::Xmod(const char* path)
 
     _file.seekg(28, ios::cur);//7f
 
+    char sname[255];
+
+
+	_file.read((char *)&n, 4);
+	_file.read((char *)&n, 4);
+	_file.read((char *)sname, n);
+
+	_file.read((char *)&n, 4);//num2
+
+    char vb[4];
+	_file.read((char *)&vb, 4);
+
     int check = 0;
 	_file.read((char *)&check, 4);
     while(check != -1)
@@ -67,22 +79,44 @@ Xmod::Xmod(const char* path)
 
         uint16 num2;
 	    _file.read((char *)&num2, 4);//num2
-        char vb[4];
-	    _file.read((char *)&vb, 4);
-        cout << hex << showbase;
-        cout << "vb ";
-        for(int t = 0; t < 4; t++)
-        {
-            int ii = vb[0];
-            cout << ii << " ";
-        }
-        cout << endl;
+        char mb[4];
+	    _file.read((char *)&mb, 4);
 
-	    _file.read((char *)&n, 4);
+       	_file.read((char *)&n, 4);
         cout << dec << showbase << "vert " << n << endl;
 
 
-    
+        int init = _file.tellg();
+        int vlen = 12;
+        for(; vlen < 128; vlen+=4)
+        {
+            _file.seekg(init + vlen * n);
+
+            uint32 facen;
+	        _file.read((char *)&facen, 4);
+            if(!_file.good())
+                return;
+
+            if(facen > 300 && facen < 3000)
+                break;
+        }
+        cout << "vlen " << vlen << endl;
+
+        cout << hex << showbase << " vb ";
+        for(int t = 0; t < 2; t++)
+        {
+            uint32 ii = (unsigned char)vb[t];
+            cout << ii << " ";
+        }
+        cout << " mb ";
+        for(int t = 0; t < 2; t++)
+        {
+            uint32 ii = (unsigned char)mb[t];
+            cout << ii << " ";
+        }
+        cout << dec << showbase << vlen;
+
+        cout << endl;
 
 
         return;
