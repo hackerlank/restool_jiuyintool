@@ -29,15 +29,16 @@ Xmod::Xmod(const char* path)
 
     _file.seekg(28, ios::cur);//7f
 
-    //char sname[255];
-	//_file.read((char *)&n, 4);
-	//_file.read((char *)&n, 4);
-	//_file.read((char *)sname, n);
+    char sname[255];
+	_file.read((char *)&n, 4);
+    cout << "n1 " << n;
+	_file.read((char *)&n, 4);
+	_file.read((char *)sname, n);
 
-	//_file.read((char *)&num2, 4);//num2
+	_file.read((char *)&num2, 4);//num2
 
-    //char vb[4];
-	//_file.read((char *)&vb, 4);
+    char vb[4];
+	_file.read((char *)&vb, 4);
 
     int check = 0;
 	_file.read((char *)&check, 4);
@@ -65,7 +66,8 @@ Xmod::Xmod(const char* path)
     _file.seekg(24, ios::cur);//6f
 
 	_file.read((char *)&n, 4);//numObj
-    cout << "objs " << n << endl;
+    cout << " n2 " << n;
+    //cout << "objs " << n << endl;
     for(int i = n; i > 0; i--)
     {
         Obj obj;
@@ -81,7 +83,7 @@ Xmod::Xmod(const char* path)
 
         uint32 vertn;
        	_file.read((char *)&vertn, 4);
-        cout << dec << showbase << "vert " << vertn << endl;
+        //cout << dec << showbase << "vert " << vertn << endl;
 
 
         uint32 facen;
@@ -97,32 +99,36 @@ Xmod::Xmod(const char* path)
 
             if(facen > vertn - 50 && facen < 999999)
             {
-                cout << "vlen " << vlen << endl;
-                cout << "facen " << facen << endl;
+                //cout << "vlen " << vlen << endl;
+                //cout << "facen " << facen << endl;
 
-                _file.seekg(facen * 2, ios::cur);
-                if(!_file.good())
-                    return;
+                for(int t = 0; t < facen; t++)
+                {
+                    uint16 idx;
+	                _file.read((char *)&idx, 2);
+                    if(!_file.good() || n > vertn)
+                        return;
+                }
 
                 //int tt;
        	        //_file.read((char *)&tt, 4);
                 //cout << "ssn " << tt << endl;
                 //if(tt >= -1 && tt < 256)
                 {
-                    cout << hex << showbase << " vb ";
-                    for(int t = 0; t < 4; t++)
-                    {
-                        //uint32 ii = (unsigned char)vb[t];
-                        //cout << ii << " ";
-                    }
-                    cout << " mb ";
-                    for(int t = 0; t < 4; t++)
-                    {
-                        uint32 ii = (unsigned char)mb[t];
-                        cout << ii << " ";
-                    }
-                    //cout << ukn3 << " " <<  num1 << " " <<  num2 << " ";
-                    cout << dec << showbase << vlen;
+                    //cout << hex << showbase << " vb ";
+                    //for(int t = 0; t < 4; t++)
+                    //{
+                    //    uint32 ii = (unsigned char)vb[t];
+                    //    cout << ii << " ";
+                    //}
+                    //cout << " mb ";
+                    //for(int t = 0; t < 4; t++)
+                    //{
+                    //    uint32 ii = (unsigned char)mb[t];
+                    //    cout << ii << " ";
+                    //}
+                    //cout << "uuu" << ukn3 << " " <<  num1 << " " <<  num2 << " ";
+                    cout << dec << showbase << " " << vlen;
                     cout << endl;
                     return;
 
