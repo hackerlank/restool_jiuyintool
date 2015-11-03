@@ -14,32 +14,30 @@ Xmod::Xmod(const char* path)
 
 
     uint32 n;
+    uint32 ukn1, ukn2, ukn3, num1, num2, num3;
 
-	_file.read((char *)&n, 4);//ukn1
-	_file.read((char *)&n, 4);//ukn2
+	_file.read((char *)&ukn1, 4);//ukn1 0x2
+	_file.read((char *)&ukn2, 4);//ukn2 0x1
 
 
     memset(&_name, 0, sizeof(_name));
 	_file.read((char *)&n, 4);
 	_file.read((char *)_name, n);
 
-	_file.read((char *)&n, 4);//ukn3
-    uint32 num1;
+	_file.read((char *)&ukn3, 4);//ukn3[0,1]
 	_file.read((char *)&num1, 4);//num1
 
     _file.seekg(28, ios::cur);//7f
 
-    char sname[255];
+    //char sname[255];
+	//_file.read((char *)&n, 4);
+	//_file.read((char *)&n, 4);
+	//_file.read((char *)sname, n);
 
+	//_file.read((char *)&num2, 4);//num2
 
-	_file.read((char *)&n, 4);
-	_file.read((char *)&n, 4);
-	_file.read((char *)sname, n);
-
-	_file.read((char *)&n, 4);//num2
-
-    char vb[4];
-	_file.read((char *)&vb, 4);
+    //char vb[4];
+	//_file.read((char *)&vb, 4);
 
     int check = 0;
 	_file.read((char *)&check, 4);
@@ -77,47 +75,60 @@ Xmod::Xmod(const char* path)
 	    _file.read((char *)obj.name, n);
 
 
-        uint16 num2;
-	    _file.read((char *)&num2, 4);//num2
+	    _file.read((char *)&num3, 4);//num3 0x0
         char mb[4];
 	    _file.read((char *)&mb, 4);
 
-       	_file.read((char *)&n, 4);
-        cout << dec << showbase << "vert " << n << endl;
+        uint32 vertn;
+       	_file.read((char *)&vertn, 4);
+        cout << dec << showbase << "vert " << vertn << endl;
 
 
+        uint32 facen;
         int init = _file.tellg();
         int vlen = 12;
-        for(; vlen < 128; vlen+=4)
+        for(; vlen < 128; vlen += 4)
         {
-            _file.seekg(init + vlen * n);
+            _file.seekg(init + vlen * vertn);
 
-            uint32 facen;
 	        _file.read((char *)&facen, 4);
             if(!_file.good())
                 return;
 
-            if(facen > 300 && facen < 3000)
-                break;
-        }
-        cout << "vlen " << vlen << endl;
+            if(facen > vertn - 50 && facen < 999999)
+            {
+                cout << "vlen " << vlen << endl;
+                cout << "facen " << facen << endl;
 
-        cout << hex << showbase << " vb ";
-        for(int t = 0; t < 2; t++)
-        {
-            uint32 ii = (unsigned char)vb[t];
-            cout << ii << " ";
-        }
-        cout << " mb ";
-        for(int t = 0; t < 2; t++)
-        {
-            uint32 ii = (unsigned char)mb[t];
-            cout << ii << " ";
-        }
-        cout << dec << showbase << vlen;
+                _file.seekg(facen * 2, ios::cur);
+                if(!_file.good())
+                    return;
 
-        cout << endl;
+                //int tt;
+       	        //_file.read((char *)&tt, 4);
+                //cout << "ssn " << tt << endl;
+                //if(tt >= -1 && tt < 256)
+                {
+                    cout << hex << showbase << " vb ";
+                    for(int t = 0; t < 4; t++)
+                    {
+                        //uint32 ii = (unsigned char)vb[t];
+                        //cout << ii << " ";
+                    }
+                    cout << " mb ";
+                    for(int t = 0; t < 4; t++)
+                    {
+                        uint32 ii = (unsigned char)mb[t];
+                        cout << ii << " ";
+                    }
+                    //cout << ukn3 << " " <<  num1 << " " <<  num2 << " ";
+                    cout << dec << showbase << vlen;
+                    cout << endl;
+                    return;
 
+                }
+            }
+        }
 
         return;
 
