@@ -16,46 +16,23 @@ Xmod::Xmod(const char* path)
     uint32 n;
     uint32 ukn1, ukn2, ukn3, num1, num2, num3;
 
-	_file.read((char *)&ukn1, 4);//ukn1 0x2
-	_file.read((char *)&ukn2, 4);//ukn2 0x1
+	_file.read((char *)&ukn1, 4);//0x2
+	_file.read((char *)&ukn2, 4);//0x1
 
 
     memset(&_name, 0, sizeof(_name));
 	_file.read((char *)&n, 4);
 	_file.read((char *)_name, n);
 
-	_file.read((char *)&ukn3, 4);//ukn3[0,1]
+	_file.read((char *)&ukn3, 4);//[0,1]
 	_file.read((char *)&num1, 4);//num1
 
     _file.seekg(28, ios::cur);//7f
-
-    char sname[255];
-	_file.read((char *)&n, 4);
-    cout << "n1 " << n;
-	_file.read((char *)&n, 4);
-	_file.read((char *)sname, n);
-
-	_file.read((char *)&num2, 4);//num2
-
-    char vb[4];
-	_file.read((char *)&vb, 4);
 
     int check = 0;
 	_file.read((char *)&check, 4);
     while(check != -1)
     {
-        //char sname[255];
-
-	    //_file.read((char *)&n, 4);
-	    //_file.read((char *)sname, n);
-
-	    //_file.read((char *)&n, 4);//num2
-
-        //char vb[4];
-	    //_file.read((char *)&vb, 4);
-
-        //_file.seekg(40, ios::cur);//10f
-
         _file.seekg(-3, ios::cur);
 	    _file.read((char *)&check, 4);
 
@@ -66,8 +43,7 @@ Xmod::Xmod(const char* path)
     _file.seekg(24, ios::cur);//6f
 
 	_file.read((char *)&n, 4);//numObj
-    cout << " n2 " << n;
-    //cout << "objs " << n << endl;
+    cout << "objs " << n << " " << hex << showbase << _file.tellg() << dec << showbase << endl;
     for(int i = n; i > 0; i--)
     {
         Obj obj;
@@ -83,7 +59,7 @@ Xmod::Xmod(const char* path)
 
         uint32 vertn;
        	_file.read((char *)&vertn, 4);
-        //cout << dec << showbase << "vert " << vertn << endl;
+        cout << dec << showbase << "vert " << vertn << endl;
 
 
         uint32 facen;
@@ -97,44 +73,33 @@ Xmod::Xmod(const char* path)
             if(!_file.good())
                 return;
 
-            if(facen > vertn - 50 && facen < 999999)
+            if(facen % 3 == 0 && facen + 64 > vertn && facen < vertn * 6 + 64)
             {
-                //cout << "vlen " << vlen << endl;
-                //cout << "facen " << facen << endl;
-
-                for(int t = 0; t < facen; t++)
+                cout << "guess " << facen << " " << vertn << endl;
+                int t;
+                for(t = 0; t < facen/3; t++)
                 {
-                    uint16 idx;
-	                _file.read((char *)&idx, 2);
-                    if(!_file.good() || n > vertn)
-                        return;
+                    uint16 idx[3];
+	                _file.read((char *)idx, 6);
+                    if(!_file.good())
+                        break;
+                    if(idx[0] > vertn || idx[1] > vertn || idx[2] > vertn)
+                        break;
+                    if(idx[0] == idx[1] && idx[1] == idx[2])
+                        break;
                 }
-
-                //int tt;
-       	        //_file.read((char *)&tt, 4);
-                //cout << "ssn " << tt << endl;
-                //if(tt >= -1 && tt < 256)
+                if(t >= facen/3)
                 {
-                    //cout << hex << showbase << " vb ";
-                    //for(int t = 0; t < 4; t++)
-                    //{
-                    //    uint32 ii = (unsigned char)vb[t];
-                    //    cout << ii << " ";
-                    //}
-                    //cout << " mb ";
-                    //for(int t = 0; t < 4; t++)
-                    //{
-                    //    uint32 ii = (unsigned char)mb[t];
-                    //    cout << ii << " ";
-                    //}
-                    //cout << "uuu" << ukn3 << " " <<  num1 << " " <<  num2 << " ";
-                    cout << dec << showbase << " " << vlen;
-                    cout << endl;
-                    return;
-
+                    cout << "facen " << facen << endl;
+                    cout << "vlen " << vlen << endl;
+                    break;
                 }
             }
         }
+        if(vlen >= 128)
+            return;
+
+        cout << "ends " << hex << showbase << _file.tellg() << dec << showbase << endl;
 
         return;
 
