@@ -21,13 +21,10 @@ typedef struct _Obj
 {
     char name[255];
 
-    char mtlName[255];
-    char texName[255];
-    char texFile[255];
-
     vector<float>   vert;
     vector<short>   face;
     vector<Bind>    bind;
+    vector<string>  texs;
 } Obj;
 
 #pragma pack()

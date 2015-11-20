@@ -64,6 +64,8 @@ Xmod::Xmod(const char* path)
 
         uint32 facen;
         int init = _file.tellg();
+
+        //test vert
         int vlen = 12;
         for(; vlen < 128; vlen += 4)
         {
@@ -98,30 +100,132 @@ Xmod::Xmod(const char* path)
         }
         if(vlen >= 128)
             return;
+        
+        //test bone
 
-        cout << "ends " << hex << showbase << _file.tellg() << dec << showbase << endl;
+        bool hasBone = true;
+        for(int i = 0; i < vertn; i++)
+        {
+            Bind bb;
+	        _file.read((char *)&bb, sizeof(Bind));
+            if(!_file.good())
+                return;
 
-        return;
+            if( bb.b1 < -1 || bb.b2 < -1 || bb.b3 < -1 || bb.b4 < -1 ||
+                bb.b1 > 999 || bb.b2 > 999 || bb.b3 > 999 || bb.b4 > 999 ||
+                bb.w1 + bb.w2 + bb.w3 + bb.w4 > 1.01f ||
+                bb.w1 + bb.w2 + bb.w3 + bb.w4 < -0.01f)
+            {
+                hasBone = false;
+                break;
+            }
+        }
+        cout << "bone  " << int(hasBone) << endl;
 
 
-	    _file.read((char *)&n, 4);
-	    _file.read((char *)&obj.mtlName, n);
-        cout << obj.mtlName << endl;
+        //read data
+        _file.seekg(init);
+        for(int i = 0; i < vertn*vlen/4; i++)
+        {
+            float f;
+	        _file.read((char *)&f, 4);
+            obj.vert.push_back(f);
+        }
+	    _file.read((char *)&facen, 4);
+        for(int i = 0; i < facen; i++)
+        {
+            float s;
+	        _file.read((char *)&s, 2);
+            obj.face.push_back(s);
+        }
 
-	    _file.read((char *)&n, 4);
-	    _file.read((char *)&obj.texName, n);
-        cout << obj.texName << endl;
+        if(hasBone)
+        {
+            for(int i = 0; i < vertn; i++)
+            {
+                Bind b;
+	            _file.read((char *)&b, sizeof(Bind));
+                obj.bind.push_back(b);
+            }
+	        
+            _file.read((char *)&n, 4);
+            char boneNames[n];
+            _file.read((char *)boneNames, n);
+            cout << "boneNames " << boneNames << endl;
+        }
 
-	    _file.read((char *)&n, 4);
-	    _file.read((char *)&obj.texFile, n);
-        cout << obj.texFile << endl;
 
+
+
+        //test string
+        int last = _file.tellg();
+        while(true)
+        {
+            int mark = _file.tellg();
+            int i;
+            for(i = 0; i < 256; i += 4)
+            {
+                bool isStr = true;
+                char ss[255];
+
+                _file.seekg(mark + i, ios::beg);
+                if(!_file.good())
+                {
+                    i = 256;
+                    break;
+                }
+
+                _file.read((char *)&n, 4);
+                if(!_file.good())
+                {
+                    i = 256;
+                    break;
+                }
+
+                if(n > 4 && n < 256)
+                {
+                    _file.read(ss, n);
+                    if(!_file.good())
+                        break;
+
+                    for(int j = 0; j < n; j++)
+                    {
+                        char c = ss[j];
+                        if((c >= 'a' && c <= 'z') ||
+                           (c >= 'A' && c <= 'Z') ||
+                           (c >= '0' && c <= '9') ||
+                           c == '.' || c == '_' || 
+                           c == '-' || c == '#')
+                        {
+                            //ok;
+                        }else
+                        {
+                            isStr = false;
+                        }
+                    }
+
+                }else
+                {
+                    isStr = false;
+                }
+
+                if(isStr)
+                {
+                    cout << ss << endl;
+                    obj.texs.push_back(ss);
+                    last = mark + i;
+                    break;
+                }
+            }
+            if(i >= 256)
+                break;
+        }
+        _file.seekg(last, ios::beg);
 
 
         _objs.push_back(obj);
-        cout << "obj end at " << hex << showbase << _file.tellg() << endl;
+        cout << "obj ends " << hex << showbase << last << " " << _file.tellg() << dec << showbase << endl;
     }
-
 }
 
 
