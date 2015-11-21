@@ -21,6 +21,11 @@ typedef struct _Obj
 {
     char name[255];
 
+    int     vertn;
+    int     facen;
+    int     vertLen;
+    char*   boneName;
+
     vector<float>   vert;
     vector<short>   face;
     vector<Bind>    bind;

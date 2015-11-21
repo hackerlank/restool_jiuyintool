@@ -44,7 +44,7 @@ Xmod::Xmod(const char* path)
 
 	_file.read((char *)&n, 4);//numObj
     cout << "objs " << n << " " << hex << showbase << _file.tellg() << dec << showbase << endl;
-    for(int i = n; i > 0; i--)
+    for(int i = n * 2; i > 0; i--)
     {
         Obj obj;
         memset(&obj, 0, sizeof(obj));
@@ -59,7 +59,6 @@ Xmod::Xmod(const char* path)
 
         uint32 vertn;
        	_file.read((char *)&vertn, 4);
-        cout << dec << showbase << "vert " << vertn << endl;
 
 
         uint32 facen;
@@ -94,6 +93,7 @@ Xmod::Xmod(const char* path)
                 {
                     cout << "facen " << facen << endl;
                     cout << "vlen " << vlen << endl;
+                    obj.vertLen = vlen;
                     break;
                 }
             }
@@ -125,13 +125,16 @@ Xmod::Xmod(const char* path)
 
         //read data
         _file.seekg(init);
+        obj.vertn = vertn;
         for(int i = 0; i < vertn*vlen/4; i++)
         {
             float f;
 	        _file.read((char *)&f, 4);
             obj.vert.push_back(f);
         }
+
 	    _file.read((char *)&facen, 4);
+        obj.facen = facen;
         for(int i = 0; i < facen; i++)
         {
             float s;
@@ -149,9 +152,9 @@ Xmod::Xmod(const char* path)
             }
 	        
             _file.read((char *)&n, 4);
-            char boneNames[n];
-            _file.read((char *)boneNames, n);
-            cout << "boneNames " << boneNames << endl;
+            obj.boneName = new char[n];
+            _file.read((char *)obj.boneName, n);
+            cout << "boneName " << obj.boneName << endl;
         }
 
 
@@ -163,7 +166,7 @@ Xmod::Xmod(const char* path)
         {
             int mark = _file.tellg();
             int i;
-            for(i = 0; i < 256; i += 4)
+            for(i = 0; i < 9999; i += 4)
             {
                 bool isStr = true;
                 char ss[255];
@@ -171,19 +174,20 @@ Xmod::Xmod(const char* path)
                 _file.seekg(mark + i, ios::beg);
                 if(!_file.good())
                 {
-                    i = 256;
+                    i = 9999;
                     break;
                 }
 
                 _file.read((char *)&n, 4);
                 if(!_file.good())
                 {
-                    i = 256;
+                    i = 9999;
                     break;
                 }
 
                 if(n > 4 && n < 256)
                 {
+                    memset(ss, 0, 255);
                     _file.read(ss, n);
                     if(!_file.good())
                         break;
@@ -195,6 +199,8 @@ Xmod::Xmod(const char* path)
                            (c >= 'A' && c <= 'Z') ||
                            (c >= '0' && c <= '9') ||
                            c == '.' || c == '_' || 
+                           c == ' ' || c == ':' || 
+                           c == '+' || c == '@' || 
                            c == '-' || c == '#')
                         {
                             //ok;
@@ -217,13 +223,14 @@ Xmod::Xmod(const char* path)
                     break;
                 }
             }
-            if(i >= 256)
+            if(i >= 9999)
                 break;
         }
         _file.seekg(last, ios::beg);
 
 
         _objs.push_back(obj);
+        cout << "[OBJ]" << obj.name << " vertn " << obj.vertn << endl;
         cout << "obj ends " << hex << showbase << last << " " << _file.tellg() << dec << showbase << endl;
     }
 }
