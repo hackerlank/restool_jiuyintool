@@ -13,14 +13,19 @@ using namespace std;
 //#define TestFiles "../res.package.files/res/obj/weapon/weapon_boss_003_exp/weapon_boss_003.xmod"
 //#define TestFiles "../res.package.files/res/obj/weapon/sthorn/sthorn_006/sthorn_006.xmod"
 //#define TestFiles "../char/g_fashion001/g_foots001.xmod"
-#define TestFiles "../res.package.files/res/map/obj/effect/scenes_light_009.xmod"
-
+//#define TestFiles "../res.package.files/res/map/obj/effect/scenes_light_009.xmod"
+//#define TestFiles "../g_face/g_face.xmod"
+#define TestFiles "../liushu01.xmod"
 
 void work(const char *path)
 {
     cout << "[Read]" << path << endl;
 	TestClass tt(path);
-	//tt.info();
+    cout <<"[INFO]==============================="<<endl;
+	tt.info();
+    cout <<"[SAVE]==============================="<<endl;
+	tt.save();
+    cout <<"====================================="<<endl;
 }
 
 int main(int argc, char* argv[])

@@ -137,7 +137,7 @@ Xmod::Xmod(const char* path)
         obj.facen = facen;
         for(int i = 0; i < facen; i++)
         {
-            float s;
+            uint16 s;
 	        _file.read((char *)&s, 2);
             obj.face.push_back(s);
         }
@@ -253,6 +253,56 @@ void Xmod::info()
 
 void Xmod::save()
 {
+    for(int i = 0; i < _objs.size(); i++)
+    {
+        Obj obj = _objs[i];
+
+        char path[255];
+        strcpy(path, "out/");
+        strcpy(path+4, obj.name);
+        ofstream fout(path, ios::out|ios::binary);
+
+
+        uint16 vertN = (uint16)obj.vertn;
+        fout.write((char*)&vertN, 2);
+        cout << "vert " << vertN << endl; 
+        for(int p = 0; p < obj.vert.size(); p += (obj.vertLen/4))
+        {
+            for(int t = 0; t < 3; t++)
+            {
+                float f = obj.vert[p + t] * 100;
+                fout.write((char*)&f, 4);
+                //cout << f << " ";
+            }
+            //cout << endl;
+
+            float u = obj.vert[p + (obj.vertLen/4) - 2];
+            fout.write((char*)&u, 4);
+            float v = 1.0f - obj.vert[p + (obj.vertLen/4) - 1];
+            fout.write((char*)&v, 4);
+
+            uint8 bindN = 1;
+            fout.write((char*)&bindN, 1);
+            fout.write((char*)&bindN, 1);
+            float bindW = 1.0f;
+            fout.write((char*)&bindW, 4);
+        }
+
+
+
+        uint16 faceN = (uint16)obj.facen/3;
+        fout.write((char*)&faceN, 2);
+        cout << "face " << faceN << endl; 
+        for(int p = 0; p < obj.face.size(); p++)
+        {
+            uint16 idx = obj.face[p];
+            fout.write((char*)&idx, 2);
+            //cout << idx << " ";
+        }
+        //cout << endl;
+
+        fout.close();
+    }
 
 }
 
